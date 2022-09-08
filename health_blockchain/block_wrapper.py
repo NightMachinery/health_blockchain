@@ -5,12 +5,19 @@ from icecream import ic
 from typing import Union, Any, Dict
 from cryptography.fernet import Fernet, MultiFernet
 
+
 class BlockWrapper:
     """
-    BlockWrapper wraps around a Block and handles its cryptographical concerns.
+    BlockWrapper wraps around a Block and encrypts/decrypts it.
     """
 
-    def __init__(*, block_decrypted: Block=None, block_encrypted=None, signature_pub_key=None, readwrite_keys=None):
+    def __init__(
+        self,
+        *,
+        block_decrypted: Block = None,
+        block_encrypted=None,
+        readwrite_keys=None
+    ):
         if readwrite_key is None:
             raise Exception("No read/write keys provided!")
         else:
