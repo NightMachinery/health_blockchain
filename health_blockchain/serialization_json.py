@@ -66,7 +66,8 @@ def json_dumps(obj, /):
 
 def obj_deserialize(block_bytes, /):
     block_dict = json.loads(
-        block_bytes, cls=json.JSONDecoder,
+        block_bytes,
+        cls=json.JSONDecoder,
         # object_hook=enhanced_json_decode_one,
     )
     return enhanced_json_decode_one(block_dict)
