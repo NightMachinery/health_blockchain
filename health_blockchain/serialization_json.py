@@ -48,7 +48,8 @@ def enhanced_json_decode_one(o, /):
             if o_lst[0] == json_bytes_base64_marker:
                 return base64.b64decode(o_lst[1], validate=True)
             elif o_lst[0] == json_blockchain_marker:
-                return Blockchain(o_lst[1])
+                return Blockchain(
+                    enhanced_json_decode_one(o_lst[1]))
             elif o_lst[0] == json_dataclass_marker:
                 if o_lst[1] == "Block":
                     return Block(**enhanced_json_decode_one(o_lst[2]))
@@ -77,7 +78,7 @@ block_deserialize = obj_deserialize
 
 
 def obj_serialize(block: Any, /):
-    return json_dumps(block)
+    return json_dumps(block).encode()
 
 
 block_serialize = obj_serialize

@@ -1,0 +1,413 @@
+#+TITLE: Health Blockchain
+
+#+SETUPFILE: https://nightmachinery.github.io/orgmode-styles/notes_1.org
+
+* bootstrap
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+%load_ext autoreload
+%autoreload 2
+#+end_src
+
+#+RESULTS:
+
+
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+import health_blockchain
+import health_blockchain.blockchain
+from health_blockchain import *
+# from health_blockchain import block_sign_verify_all
+from health_blockchain.block_utilities import (
+    block_sign_verify_all,
+    block_serialize_for_sig,
+    )
+from health_blockchain.crypto_utilities import sign_bytes
+
+import dataclasses
+import sys
+#+end_src
+
+#+RESULTS:
+
+* patient 1
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+patient_1_blockchain = Blockchain()
+print(patient_1_blockchain)
+#+end_src
+
+#+RESULTS:
+: Blockchain:
+: 	blocks=[]
+: 	content=None
+:
+
+** generate the keys
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+patient_1_sign_keys = sign_keys_generate()
+patient_1_sign_keys
+#+end_src
+
+#+RESULTS:
+| <cryptography.hazmat.backends.openssl.ed25519._Ed25519PrivateKey | at | 0x7f89298e71f0> | <cryptography.hazmat.backends.openssl.ed25519._Ed25519PublicKey | at | 0x7f892999e050> |
+
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+patient_1_readwrite_keys = []
+patient_1_readwrite_keys = readwrite_key_generate_and_append(patient_1_readwrite_keys)
+
+patient_1_readwrite_keys
+#+end_src
+
+#+RESULTS:
+| <cryptography.fernet.Fernet | at | 0x7f8929ba80a0> |
+
+* doctor 1
+** generate the keys
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+doctor_1_sign_keys = sign_keys_generate()
+doctor_1_sign_keys
+#+end_src
+
+#+RESULTS:
+| <cryptography.hazmat.backends.openssl.ed25519._Ed25519PrivateKey | at | 0x7f8929ba80d0> | <cryptography.hazmat.backends.openssl.ed25519._Ed25519PublicKey | at | 0x7f8929ba81c0> |
+
+* doctor 2
+** generate the keys
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+doctor_2_sign_keys = sign_keys_generate()
+doctor_2_sign_keys
+#+end_src
+
+#+RESULTS:
+| <cryptography.hazmat.backends.openssl.ed25519._Ed25519PrivateKey | at | 0x7f8929ba8910> | <cryptography.hazmat.backends.openssl.ed25519._Ed25519PublicKey | at | 0x7f8929ba8130> |
+
+* patient 1 and doctor 1
+** block 1
+The doctor creates the block and signs it:
+
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+block_content = dict(first_name="Arman", last_name="Irani", photo=b'fake photo stored as bytes')
+
+new_block = Block(block_content, None, [])
+
+new_block = block_sign(doctor_1_sign_keys[0], new_block)
+new_block
+#+end_src
+
+#+RESULTS:
+: Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'fake photo stored as bytes'}, previous_block_hash=None, signatures=[b'\x11\xfb\x8cs\xc0\xcf\xc1\xd3\xa6\xd8\x8dn\xe7w0\xfc\xf0W\xd5\xa4\x9b\x82\xe8y\xf9\xe7\x82\xc9\xfb\x13\xff.\xba\x1bt!\xc2\xf1\x0e\x19~]J\x01c\xdc\x98\xc3kS\xb7\x9cD\xee\x8b\xaa\x85\xab\x02\xfe\x9bP\xec\x0b'])
+
+Then the doctor gives the block to the patient who will also sign it:
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+new_block = block_sign(patient_1_sign_keys[0], new_block)
+new_block
+#+end_src
+
+#+RESULTS:
+: Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'fake photo stored as bytes'}, previous_block_hash=None, signatures=[b'\x11\xfb\x8cs\xc0\xcf\xc1\xd3\xa6\xd8\x8dn\xe7w0\xfc\xf0W\xd5\xa4\x9b\x82\xe8y\xf9\xe7\x82\xc9\xfb\x13\xff.\xba\x1bt!\xc2\xf1\x0e\x19~]J\x01c\xdc\x98\xc3kS\xb7\x9cD\xee\x8b\xaa\x85\xab\x02\xfe\x9bP\xec\x0b', b'\xa0\x13O\x00\x86b\xf2Of\x93\xd5$\xaf\x95@\xe6)e\xda\x01s\x1d\x92e\xd2W\x8b\x90\xad\x18\xe4\xa0\x12P\xa2e\x07\xc5%f\x1e\xb5\x7fS\xe6\xe6u\x81=?\xc8\x06\x9d\x07x\xd4$&\xe7\x88\x88\x05\x02\x0c'])
+
+Let's verify the signatures:
+
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+block_sign_verify_all(
+    public_keys=[patient_1_sign_keys[1],
+                 doctor_1_sign_keys[1]],
+    block=new_block)
+#+end_src
+
+#+RESULTS:
+: True
+
+Now let's see the verification fail for doctor 2:
+
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+block_sign_verify_all(
+    public_keys=[patient_1_sign_keys[1],
+                 doctor_2_sign_keys[1]],
+    block=new_block)
+#+end_src
+
+#+RESULTS:
+: False
+
+The patient will now add this block to their blockchain and also verify the signatures:
+
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+patient_1_blockchain.add_block(
+    block=new_block,
+    public_keys=[patient_1_sign_keys[1],
+                 doctor_1_sign_keys[1]],
+)
+
+print(patient_1_blockchain)
+#+end_src
+
+#+RESULTS:
+: Blockchain:
+: 	blocks=[Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'fake photo stored as bytes'}, previous_block_hash=None, signatures=[b'\x11\xfb\x8cs\xc0\xcf\xc1\xd3\xa6\xd8\x8dn\xe7w0\xfc\xf0W\xd5\xa4\x9b\x82\xe8y\xf9\xe7\x82\xc9\xfb\x13\xff.\xba\x1bt!\xc2\xf1\x0e\x19~]J\x01c\xdc\x98\xc3kS\xb7\x9cD\xee\x8b\xaa\x85\xab\x02\xfe\x9bP\xec\x0b', b'\xa0\x13O\x00\x86b\xf2Of\x93\xd5$\xaf\x95@\xe6)e\xda\x01s\x1d\x92e\xd2W\x8b\x90\xad\x18\xe4\xa0\x12P\xa2e\x07\xc5%f\x1e\xb5\x7fS\xe6\xe6u\x81=?\xc8\x06\x9d\x07x\xd4$&\xe7\x88\x88\x05\x02\x0c'])]
+: 	content={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'fake photo stored as bytes'}
+:
+
+** block 2
+Since the patient's blockchain is no longer empty, the patient should give the latest block to the doctor so that they can produce the next block:
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+last_block = patient_1_blockchain.blocks[-1]
+
+block_2 = block_new_from(last_block, dict(
+    photo=b'some fake updated photo',
+    chest_xray_2022_05_11=b'some fake chest x-ray',
+    ))
+block_2
+#+end_src
+
+#+RESULTS:
+: Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'some fake updated photo', 'chest_xray_2022_05_11': b'some fake chest x-ray'}, previous_block_hash=b'\xe8\x07 \x8b_\xd5\x07\x08Ku\xf7\xbc\\\x10\x1f\xc7\xcf\xb9}\x1dHv\xb53Y\x10G\xb8\xe5\x9dx\x9d\xf5\x1e{2\x12\xc91\xb1\xb7\xa4O\xb17d\x15\x0c\x1d\xb9\xff\xe1\n\xf9j\xc1*=\x11\x9b\xda\xc1\xa9\x94', signatures=[])
+
+The doctor signs this block:
+
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+block_2 = block_sign(doctor_1_sign_keys[0], block_2)
+block_2
+#+end_src
+
+#+RESULTS:
+: Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'some fake updated photo', 'chest_xray_2022_05_11': b'some fake chest x-ray'}, previous_block_hash=b'\xe8\x07 \x8b_\xd5\x07\x08Ku\xf7\xbc\\\x10\x1f\xc7\xcf\xb9}\x1dHv\xb53Y\x10G\xb8\xe5\x9dx\x9d\xf5\x1e{2\x12\xc91\xb1\xb7\xa4O\xb17d\x15\x0c\x1d\xb9\xff\xe1\n\xf9j\xc1*=\x11\x9b\xda\xc1\xa9\x94', signatures=[b':\x85\xe0\xbf\x13\x01\xbb\x01\xd3\x1a\x93\xf3Eu\xfa\x01t?d\xd4\x1c\xfe\x91w0B\xb0\x03|\x0e\x1f\xe35\xf6\xbfD\xf4\xe3\x19n3r\xb8:\xe1&eY#\x1eW<\x19H\xf3\x00\xbb\xfe\x98\x83.\xbf\x94\x03'])
+
+The patient signs this block and adds it to their blockchain:
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+block_2 = block_sign(patient_1_sign_keys[0], block_2)
+
+patient_1_blockchain.add_block(
+    block=block_2,
+    public_keys=[patient_1_sign_keys[1],
+                 doctor_1_sign_keys[1]],
+)
+
+print(patient_1_blockchain)
+#+end_src
+
+#+RESULTS:
+: Blockchain:
+: 	blocks=[Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'fake photo stored as bytes'}, previous_block_hash=None, signatures=[b'\x11\xfb\x8cs\xc0\xcf\xc1\xd3\xa6\xd8\x8dn\xe7w0\xfc\xf0W\xd5\xa4\x9b\x82\xe8y\xf9\xe7\x82\xc9\xfb\x13\xff.\xba\x1bt!\xc2\xf1\x0e\x19~]J\x01c\xdc\x98\xc3kS\xb7\x9cD\xee\x8b\xaa\x85\xab\x02\xfe\x9bP\xec\x0b', b'\xa0\x13O\x00\x86b\xf2Of\x93\xd5$\xaf\x95@\xe6)e\xda\x01s\x1d\x92e\xd2W\x8b\x90\xad\x18\xe4\xa0\x12P\xa2e\x07\xc5%f\x1e\xb5\x7fS\xe6\xe6u\x81=?\xc8\x06\x9d\x07x\xd4$&\xe7\x88\x88\x05\x02\x0c']), Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'some fake updated photo', 'chest_xray_2022_05_11': b'some fake chest x-ray'}, previous_block_hash=b'\xe8\x07 \x8b_\xd5\x07\x08Ku\xf7\xbc\\\x10\x1f\xc7\xcf\xb9}\x1dHv\xb53Y\x10G\xb8\xe5\x9dx\x9d\xf5\x1e{2\x12\xc91\xb1\xb7\xa4O\xb17d\x15\x0c\x1d\xb9\xff\xe1\n\xf9j\xc1*=\x11\x9b\xda\xc1\xa9\x94', signatures=[b':\x85\xe0\xbf\x13\x01\xbb\x01\xd3\x1a\x93\xf3Eu\xfa\x01t?d\xd4\x1c\xfe\x91w0B\xb0\x03|\x0e\x1f\xe35\xf6\xbfD\xf4\xe3\x19n3r\xb8:\xe1&eY#\x1eW<\x19H\xf3\x00\xbb\xfe\x98\x83.\xbf\x94\x03', b'v\xeaL\xd0\xd6\xd2\x87\x8c\x02O+\xcf\xb7\xab\xbd$l\xe0\xcc5\xbeG\x0e=\nE\xc6\xc0\xffC\xb3\xa16\xf8)\xba\xc3\xba\xc4\xb1\xdat\x8d\xa8\xe3\xcf1(\xa7\xd1\xb5\x13\x8d_1\xd3.\xd2\xe61\xc3\xc0>\t'])]
+: 	content={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'some fake updated photo', 'chest_xray_2022_05_11': b'some fake chest x-ray'}
+:
+
+** invalid block
+Let's test what happens if the doctor tries to skip the latest block:
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+last_block = patient_1_blockchain.blocks[-2]
+
+new_block = block_new_from(last_block, dict(
+    some_data="hi",
+    ))
+new_block
+#+end_src
+
+#+RESULTS:
+: Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'fake photo stored as bytes', 'some_data': 'hi'}, previous_block_hash=b'\xe8\x07 \x8b_\xd5\x07\x08Ku\xf7\xbc\\\x10\x1f\xc7\xcf\xb9}\x1dHv\xb53Y\x10G\xb8\xe5\x9dx\x9d\xf5\x1e{2\x12\xc91\xb1\xb7\xa4O\xb17d\x15\x0c\x1d\xb9\xff\xe1\n\xf9j\xc1*=\x11\x9b\xda\xc1\xa9\x94', signatures=[])
+
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+new_block = block_sign(doctor_1_sign_keys[0], new_block)
+new_block = block_sign(patient_1_sign_keys[0], new_block)
+new_block
+#+end_src
+
+#+RESULTS:
+: Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'fake photo stored as bytes', 'some_data': 'hi'}, previous_block_hash=b'\xe8\x07 \x8b_\xd5\x07\x08Ku\xf7\xbc\\\x10\x1f\xc7\xcf\xb9}\x1dHv\xb53Y\x10G\xb8\xe5\x9dx\x9d\xf5\x1e{2\x12\xc91\xb1\xb7\xa4O\xb17d\x15\x0c\x1d\xb9\xff\xe1\n\xf9j\xc1*=\x11\x9b\xda\xc1\xa9\x94', signatures=[b'\xf3x}Q\xd2h\xc8\xf5\xd5\xae\x95\x1c\x99:\xe1\xb8\xdbo2%a\x81\xbc\xfa\xc0j\xb8N\xee\xb9^\xf9\xdbU\xda!\xe1\x86\xd9_ci\xa3\xea\r\x02\x92\xa1\xacH)?w\x1d\x15\xaaz\xdc\xb6\x12=\xee\xa0\x0e', b'4\xe3\x05\x08\xa2cW\xf9:\\\x91\xb2\xc5x\xd1\xe1\xef1C^{lU\x1b*G\xb0f\x93\x16\x1fO! \x1bn5\xd4\x12\x0c\x8fQN>@\xda,{\x11\x14+\x92\x06|\xbf[+\x8f\xef\xa24\x9ao\x01'])
+
+When the patient tries to add this block, it should fail:
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+patient_1_blockchain.add_block(
+    block=new_block,
+    public_keys=[patient_1_sign_keys[1],
+                 doctor_1_sign_keys[1]],
+)
+
+print(patient_1_blockchain)
+#+end_src
+
+#+RESULTS:
+:RESULTS:
+# [goto error]
+: ---------------------------------------------------------------------------
+: Exception                                 Traceback (most recent call last)
+: Input In [18], in <cell line: 1>()
+: ----> 1 patient_1_blockchain.add_block(
+:       2     block=new_block,
+:       3     public_keys=[patient_1_sign_keys[1],
+:       4                  doctor_1_sign_keys[1]],
+:       5 )
+:       7 print(patient_1_blockchain)
+:
+: File ~/Base/_Code/uni/health_blockchain/health_blockchain/blockchain.py:31, in Blockchain.add_block(self, block, public_keys)
+:      29     self.blocks.append(block)
+:      30 else:
+: ---> 31     raise Exception(
+:      32         "The new block's previous_block_hash does not match the last block in this blockchain!"
+:      33     )
+:
+: Exception: The new block's previous_block_hash does not match the last block in this blockchain!
+:END:
+
+** encrypting the whole blockchain
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+patient_1_blockchain_ed = EDWrapper(
+    obj_decrypted=patient_1_blockchain,
+    readwrite_keys=patient_1_readwrite_keys
+)
+
+patient_1_blockchain_ed
+#+end_src
+
+#+RESULTS:
+: <health_blockchain.edwrapper.EDWrapper at 0x7f8929d02830>
+
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+patient_1_blockchain_encrypted = patient_1_blockchain_ed.obj_encrypted
+patient_1_blockchain_encrypted
+#+end_src
+
+#+RESULTS:
+: b'gAAAAABjG4W2wq7bdgwbN1f_4HkC7r21Iw741cyZbF8PELyyauODaPm9kXWuq0Z9AirbTHz_uD282_Plhwe8O2HXcPymgpwi81jY99xri2xO2YxZYimrRKGUCzKtdR9znc3mL5BRXZLGCzLkrn48-RJwMg4lH5UagIiJXc4xvRCrWUCvtIlrsojdcOtpvFlu0-C3N-T3gYe9UMkFySph51B09M-UzdAjQGXm-kULhUYtnQVlcpLSsnZAjgqz8Yl4XJgWH4BBckEOWHF66Nf-h7XXHoPc7EREyC73a8NqctFPAKf9HNPqbRnGWq18jtpzuK6ubmLWNVsYwzMFgmHvBHQRjP8fBObf-ML1URIgkQ8QpSnylMyKhHTBonmfmiTxAfdcu1mRbCV2bLfdhrgbiaTz_PQYXLQyXaBEwIm2ydIsM7KGJG50MfUYxO3LWwR1Iu5RdmlTP_X4YsgUJGOrZPeRh0tqpeCKCPIi-YtTAQebU3m5xytX6R8nS35MOOJxtY6Er9yremc3__du6a6NOjDdvvZXVFpBIxi6bVohNpJTbRBwh8-fPIXZhQ0T9NYE--MXpBAm7MwgMfEFpAObUujZ23tIao5cb-EjfbB8LEodWRo5VfsUVPj8LCxbP0WXy7WxjjIYIe7XJZhz6MMjUPvJXPEYoArEatb7YbatEIBSsk42EUFt5EmAMPJl2JYz2DOmJ4hhUyLr617q29WD4jNsth5MIegdoGk3Bt5jCCWfimPLvXIKfAntpIkORCsqunWMbOE3Dg1Fn9AlRr2CbdUrlmew4iDWaEKO1z7JZ30VvGOMx7jNOw4E5p7CwdcWZTFnATf5fLw2fOPZXMO8hCIPp67pC2G-34Co8SVdxznPMlrKE4M4SldjL4vbmlNSMQU1-d-Sgx-EeB_PYsERepIvlZuTRk9bErjQr_vzxn7-hqf7fnkFePs5Ol--6y-3ZPVGSVu223wUc0Awf5W4R4DShXo6FArkOk8id2cqcwEZEjAE3xFcCb1CpalH_2s0E9G2IeJy7VS3pC6PNUMy9ta-VoOWg2uubhvQO_zkShbGHsyTYMSFwJhXiE0FfsEn_gWfPkit05pDlsY2krkoSG8ijvcHf3y1KcgvqxRSPWCskGMPrmVtbd3us-5vUxr6A-W4JansYk-u0_PuDqUaEdbWo8MfGBfyVMz-MuMV0VqvAPe0OmkI_mu16euhakGp0TLRzfI8qkqUYPJHFRP0ofKgt-0HIbkmhN3_aPvY_pBxL0Rbu8Kmtj3ud9cGx-5F7Jb033Tduu2X7K6v7yRP6cFAyZFrUDwUUBIydn_M3oaP-qmcEz9VyVk_qXTu9sBC0ZWUVJSddSmkudwx3zuiCLAzGi-1XmjHRowiFn-9pBj3DgPC-zxqmaAJuWvkRj-3RHTV5emS3HFtI3nlcMrv3I3twe1_U6befx59KhQe120vUVKSUc-mB4-AsKEMFJjeNrygVe0DgJrINAM90Rp1esMt1aUoHklgvwGU1SFQljt4jhDw-FH-TPATO2nSnCPmzW1qYU30ad2Zc_PtPsYG4rCLG1kq0RwCdnM-bXgIhoGTdRSGFfN3gbFvNv27Qa3qdqBkBGRoVQIk3VYpzxvlogA_tcgrNg4hbHV70wc2aecfwxMTnfLQHF-cZQnRk2Loydf3wCgn-lIhci9_FpewwIPLd5zUfB4Emw=='
+
+The patient can give their last read/write key to the doctor, and the doctor will be able to decrypt this data:
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+last_readwrite_key = patient_1_readwrite_keys[0]
+blockchain_ed = EDWrapper(
+    obj_encrypted=patient_1_blockchain_encrypted,
+    readwrite_keys=[last_readwrite_key],
+    )
+
+blockchain_decrypted = blockchain_ed.obj_decrypted
+print(blockchain_decrypted)
+#+end_src
+
+#+RESULTS:
+: Blockchain:
+: 	blocks=[Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'fake photo stored as bytes'}, previous_block_hash=None, signatures=[b'\x11\xfb\x8cs\xc0\xcf\xc1\xd3\xa6\xd8\x8dn\xe7w0\xfc\xf0W\xd5\xa4\x9b\x82\xe8y\xf9\xe7\x82\xc9\xfb\x13\xff.\xba\x1bt!\xc2\xf1\x0e\x19~]J\x01c\xdc\x98\xc3kS\xb7\x9cD\xee\x8b\xaa\x85\xab\x02\xfe\x9bP\xec\x0b', b'\xa0\x13O\x00\x86b\xf2Of\x93\xd5$\xaf\x95@\xe6)e\xda\x01s\x1d\x92e\xd2W\x8b\x90\xad\x18\xe4\xa0\x12P\xa2e\x07\xc5%f\x1e\xb5\x7fS\xe6\xe6u\x81=?\xc8\x06\x9d\x07x\xd4$&\xe7\x88\x88\x05\x02\x0c']), Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'some fake updated photo', 'chest_xray_2022_05_11': b'some fake chest x-ray'}, previous_block_hash=b'\xe8\x07 \x8b_\xd5\x07\x08Ku\xf7\xbc\\\x10\x1f\xc7\xcf\xb9}\x1dHv\xb53Y\x10G\xb8\xe5\x9dx\x9d\xf5\x1e{2\x12\xc91\xb1\xb7\xa4O\xb17d\x15\x0c\x1d\xb9\xff\xe1\n\xf9j\xc1*=\x11\x9b\xda\xc1\xa9\x94', signatures=[b':\x85\xe0\xbf\x13\x01\xbb\x01\xd3\x1a\x93\xf3Eu\xfa\x01t?d\xd4\x1c\xfe\x91w0B\xb0\x03|\x0e\x1f\xe35\xf6\xbfD\xf4\xe3\x19n3r\xb8:\xe1&eY#\x1eW<\x19H\xf3\x00\xbb\xfe\x98\x83.\xbf\x94\x03', b'v\xeaL\xd0\xd6\xd2\x87\x8c\x02O+\xcf\xb7\xab\xbd$l\xe0\xcc5\xbeG\x0e=\nE\xc6\xc0\xffC\xb3\xa16\xf8)\xba\xc3\xba\xc4\xb1\xdat\x8d\xa8\xe3\xcf1(\xa7\xd1\xb5\x13\x8d_1\xd3.\xd2\xe61\xc3\xc0>\t'])]
+: 	content={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'some fake updated photo', 'chest_xray_2022_05_11': b'some fake chest x-ray'}
+:
+
+This operation checks the integrity of the blockchain; all the blocks are indeed connected together if it succeeds. But it does not check the signatures of the blocks. The doctor needs to check that manually, as it is difficult to automatically know which signatures are expected.
+
+In this simple example, the doctor verifies that the blockchain is signed by the patient:
+
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+for block in blockchain_decrypted.blocks:
+    assert block_sign_verify_all(
+        public_keys=[patient_1_sign_keys[1],],
+        block=block)
+#+end_src
+
+#+RESULTS:
+
+The patient can now generate a new read/write key and re-encrypt their blockchain, so that the doctor can no longer access newer blocks.
+
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+patient_1_readwrite_keys = readwrite_key_generate_and_append(patient_1_readwrite_keys)
+
+patient_1_blockchain_ed = EDWrapper(
+    obj_decrypted=patient_1_blockchain,
+    readwrite_keys=patient_1_readwrite_keys
+)
+
+patient_1_blockchain_encrypted = patient_1_blockchain_ed.obj_encrypted
+patient_1_blockchain_encrypted
+#+end_src
+
+#+RESULTS:
+: b'gAAAAABjG4W2N4XNQBRhJ6olY0pqADid8b903b-R73owCdyVsaTY0ibHCth_mMDJjqd4-7O3cyb4KU6IZvJOva2IrBEd48EsequvOI3V0oLo1SrRjaAWrY9VaV0g2dds1SeRgWJC0bgX8D-0hlhXBAoll9mabjH9oiUXMd-8I1C4PFoX-FqMSoeOo8R5xq8bWSWedMa0OthMmZ5C1KfW6urJXQnZYsl1nRFlmlvymwldGCgK3PN8q9UQ4xml1LEpls81KRCVvfUpstEeuIlOvp0PyEC5yI6jjy64_oeLi-Ut0a7PBIMQslfAOrkLAKQXZucLb92QSKIIujwfiAptTFeIGMcDQw-8okjDeJdRP31ZmnutoWFfEUNCibegXeQO2nFZtN15CLaap2A4ZzR2V0xL8Su47Dm127mdxKtfrNs31AP4n2n8HRa6C1H-WGNKeTMOL5OmZmdOdlUFXLtuOtM851UmACx342la8LlSOCykyYOHJyRIgkX_Ehl-4aEItPwNZ4fQOaxpr1q9tbFRkYagaIj89Jo84tR_c2vnyulhL9EyBO3BRPGVAeRS3Bzay9mMQHQpufwTwS6ccQcwLgGCGs1qIyBXUiXRCZngEGMeHj-mxrUBil7j7LyzZz9ok5LAc394dvu36Ccx9WUy6nBX5TfTQobRT0ufDoXcQ5h4N8IwhHDdq7K4JcsB3VCQL2A0rT8UbvxR47FkJeN_dgBKX5Gm0nEf94xWXqltj89LHVZWj0QK9YBlfUPXwdFj_F-Q8kxAeKCPHNIAI4JU01wKc2Fvy6NwjeWkrNihLz7IV_-cFBV4meW8NddpamfsHpnCsqM9nP0WthQfuZEGcK0AwapIFmpCLrV8ZiSa_I-gnMLi8jFJTv4Yc7WvtvLxl8a369EXySF-yk5OhHyMsY2bdB2n854Pxk_VMGOV6FYwd5gG605ZD-WXKRWLPgzi3sH7cQaS_pLwihyU0HncAsLIKWMfv7MjKjxT3iWsIblq3V0UCSQtSLSKLkRIA6p3Yi7xeCuBxwY3JbHVTa-9Wm2ncebOG8vxLVHaicfAFEMmYMxl11DCxZF0ZqM7zm_XJnc6FAOX_qt1DUDGsecGz7-I9By5eSfTHzIheVjV779NlpqoqyqKEPreVe93k0YPRVNRLhEhdJ1ovAJRC8W3QPsZnC20bpawi9b7sEoBd79y7bca0DtgjpINI4G0I-j0BLIuTjQK-Ik9NWCcA9leL_5aqG_aNCE6CMlFLWSP_xtim7EXlyS7v-swgED2ZC6sgPuN7LgHTJ6z9Vj2qI5-Nf6oV81IIjlMQ_pjLGNI7TPuiVc3AaGAMQc8fhtOR6rAAEOhhC1trzwccezQhDVP6DpfN-T2sgXbnNz-wb8C7yH50qY5AKdQWqF2v2AqbAlsvF83h_oBpcIj2VQbrA4hH4Iv4G-81wxd2_tCUqlUVOr7f8GTGua-YBBSLvXkmcO6QjSVUvdeJICAunvc_G653ZKY2XkP2-uuvD0JOX37uG4q1Q8lv730J183G1BykBZNlMwIXxcfvUW4gznJNjTwYTvKJ3yKN9r_JQ8V9mxQOc1i03ik2fBJtbiqYv4CbEQ9XSaDNZaWn_efl-4WRe8z1vqHXENHctvQxBVsXhfAzRtZY1sDb_-KlJBUNMtyGYFSFycTahXi-_heDOPkG_aGuzx6u-tXI8zuFQ=='
+
+Let's see what happens when the doctor tries decrypting this new data:
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+blockchain_ed = EDWrapper(
+    obj_encrypted=patient_1_blockchain_encrypted,
+    readwrite_keys=[last_readwrite_key],
+    )
+
+blockchain_decrypted = blockchain_ed.obj_decrypted
+print(blockchain_decrypted)
+#+end_src
+
+#+RESULTS:
+:RESULTS:
+# [goto error]
+: ---------------------------------------------------------------------------
+: InvalidToken                              Traceback (most recent call last)
+: Input In [50], in <cell line: 1>()
+: ----> 1 blockchain_ed = EDWrapper(
+:       2     obj_encrypted=patient_1_blockchain_encrypted,
+:       3     readwrite_keys=[last_readwrite_key],
+:       4     )
+:       6 blockchain_decrypted = blockchain_ed.obj_decrypted
+:       7 print(blockchain_decrypted)
+:
+: File ~/Base/_Code/uni/health_blockchain/health_blockchain/edwrapper.py:36, in EDWrapper.__init__(self, obj_decrypted, obj_encrypted, readwrite_keys)
+:      34         raise Exception("No obj provided to EDWrapper's constructor!")
+:      35     else:
+: ---> 36         obj_decrypted_bytes = self.fernet.decrypt(obj_encrypted)
+:      37         obj_decrypted = obj_deserialize(obj_decrypted_bytes)
+:      38 else:
+:
+: File ~/anaconda/envs/p310/lib/python3.10/site-packages/cryptography/fernet.py:210, in MultiFernet.decrypt(self, msg, ttl)
+:     208     except InvalidToken:
+:     209         pass
+: --> 210 raise InvalidToken
+:
+: InvalidToken:
+:END:
+
+* tmp
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+sign_bytes(doctor_1_sign_keys[0], b'hi')
+#+end_src
+
+#+RESULTS:
+: b'\xdb\xb7\xeb\xeb*\x95\x7f\x850\xbeJ\xf9O\xc6\xc0\xef\x86\x95*<\x1c\x9b;\xf6-\xa7O\xd4\x08\\\xd7\x9f\tK\xf3\xa9\x15\x1ar\xa9\xbf\x9c|\xed>q\xfc\xf3\xe40\xae\xef:\x1e\tS\xfc\x1aQ\xbc[\x9e\x1b\x02'
+
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+dataclasses.replace(new_block, signatures=98)
+#+end_src
+
+#+RESULTS:
+: Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'fake photo stored as bytes', 'some_data': 'hi'}, previous_block_hash=b'\xe8\x07 \x8b_\xd5\x07\x08Ku\xf7\xbc\\\x10\x1f\xc7\xcf\xb9}\x1dHv\xb53Y\x10G\xb8\xe5\x9dx\x9d\xf5\x1e{2\x12\xc91\xb1\xb7\xa4O\xb17d\x15\x0c\x1d\xb9\xff\xe1\n\xf9j\xc1*=\x11\x9b\xda\xc1\xa9\x94', signatures=98)
+
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+block_update(new_block, signatures=[])
+#+end_src
+
+#+RESULTS:
+: Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'fake photo stored as bytes', 'some_data': 'hi'}, previous_block_hash=b'\xe8\x07 \x8b_\xd5\x07\x08Ku\xf7\xbc\\\x10\x1f\xc7\xcf\xb9}\x1dHv\xb53Y\x10G\xb8\xe5\x9dx\x9d\xf5\x1e{2\x12\xc91\xb1\xb7\xa4O\xb17d\x15\x0c\x1d\xb9\xff\xe1\n\xf9j\xc1*=\x11\x9b\xda\xc1\xa9\x94', signatures=[])
+
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+block_serialize_for_sig(new_block)
+#+end_src
+
+#+RESULTS:
+: b'["json_dataclass_marker", "Block", {"content_dictionary": {"first_name": "Arman", "last_name": "Irani", "photo": ["bytes_base64_encoded_marker", "ZmFrZSBwaG90byBzdG9yZWQgYXMgYnl0ZXM="], "some_data": "hi"}, "previous_block_hash": ["bytes_base64_encoded_marker", "6Acgi1/VBwhLdfe8XBAfx8+5fR1IdrUzWRBHuOWdeJ31HnsyEskxsbekT7E3ZBUMHbn/4Qr5asEqPRGb2sGplA=="], "signatures": []}]'
+
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+type(patient_1_blockchain)
+#+end_src
+
+#+RESULTS:
+: health_blockchain.blockchain.Blockchain
+
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+Blockchain
+#+end_src
+
+#+RESULTS:
+: health_blockchain.blockchain.Blockchain
+
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+isinstance(patient_1_blockchain, Blockchain)
+#+end_src
+
+#+RESULTS:
+: True
+
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+obj_serialize(patient_1_blockchain)
+#+end_src
+
+#+RESULTS:
+: b'["json_blockchain_marker", [["json_dataclass_marker", "Block", {"content_dictionary": {"first_name": "Arman", "last_name": "Irani", "photo": ["bytes_base64_encoded_marker", "ZmFrZSBwaG90byBzdG9yZWQgYXMgYnl0ZXM="]}, "previous_block_hash": null, "signatures": [["bytes_base64_encoded_marker", "EfuMc8DPwdOm2I1u53cw/PBX1aSbguh5+eeCyfsT/y66G3QhwvEOGX5dSgFj3JjDa1O3nETui6qFqwL+m1DsCw=="], ["bytes_base64_encoded_marker", "oBNPAIZi8k9mk9Ukr5VA5ill2gFzHZJl0leLkK0Y5KASUKJlB8UlZh61f1Pm5nWBPT/IBp0HeNQkJueIiAUCDA=="]]}], ["json_dataclass_marker", "Block", {"content_dictionary": {"first_name": "Arman", "last_name": "Irani", "photo": ["bytes_base64_encoded_marker", "c29tZSBmYWtlIHVwZGF0ZWQgcGhvdG8="], "chest_xray_2022_05_11": ["bytes_base64_encoded_marker", "c29tZSBmYWtlIGNoZXN0IHgtcmF5"]}, "previous_block_hash": ["bytes_base64_encoded_marker", "6Acgi1/VBwhLdfe8XBAfx8+5fR1IdrUzWRBHuOWdeJ31HnsyEskxsbekT7E3ZBUMHbn/4Qr5asEqPRGb2sGplA=="], "signatures": [["bytes_base64_encoded_marker", "OoXgvxMBuwHTGpPzRXX6AXQ/ZNQc/pF3MEKwA3wOH+M19r9E9OMZbjNyuDrhJmVZIx5XPBlI8wC7/piDLr+UAw=="], ["bytes_base64_encoded_marker", "dupM0NbSh4wCTyvPt6u9JGzgzDW+Rw49CkXGwP9Ds6E2+Cm6w7rEsdp0jajjzzEop9G1E41fMdMu0uYxw8A+CQ=="]]}]]]'

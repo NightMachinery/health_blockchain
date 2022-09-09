@@ -1,6 +1,10 @@
 from .block import Block
-from .serialization import block_serialize, block_deserialize
-
+from .serialization import (
+    block_serialize,
+    block_deserialize,
+    obj_serialize,
+    obj_deserialize,
+)
 from icecream import ic
 from typing import Union, Any, Dict
 from cryptography.fernet import Fernet, MultiFernet
@@ -11,7 +15,7 @@ def readwrite_key_generate():
 
 
 def readwrite_key_generate_and_append(fernets):
-    return fernets + [readwrite_key_generate()]
+    return [readwrite_key_generate()] + fernets
 
 
 class EDWrapper:
@@ -19,14 +23,8 @@ class EDWrapper:
     EDWrapper wraps around an object and encrypts/decrypts it.
     """
 
-    def __init__(
-        self,
-        *,
-        obj_decrypted=None,
-        obj_encrypted=None,
-        readwrite_keys=None
-    ):
-        if readwrite_key is None:
+    def __init__(self, *, obj_decrypted=None, obj_encrypted=None, readwrite_keys=None):
+        if readwrite_keys is None:
             raise Exception("No read/write keys provided!")
         else:
             self.fernet = MultiFernet(readwrite_keys)

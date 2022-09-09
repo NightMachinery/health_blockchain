@@ -27,3 +27,6 @@ def verify_sign(key_pub, sign: bytes, b: bytes, /) -> bool:
         return True
     except:
         return False
+
+
+sign_verify = verify_sign
