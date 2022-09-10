@@ -355,6 +355,14 @@ print(blockchain_decrypted)
 : InvalidToken:
 :END:
 
+** getting the latest data from the blockchain
+#+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
+print(patient_1_blockchain.get_latest_content())
+#+end_src
+
+#+RESULTS:
+: {'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'some fake updated photo', 'chest_xray_2022_05_11': b'some fake chest x-ray'}
+
 * tmp
 #+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
 sign_bytes(doctor_1_sign_keys[0], b'hi')
