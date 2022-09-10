@@ -17,7 +17,9 @@ class Blockchain:
             raise Exception("The given block was not signed by all required parties!")
 
         if len(self.blocks) == 0:
-            if block.previous_block_hash is not None:
+            if False and block.previous_block_hash is not None:
+                #: I have disabled this error, as it gives more flexibility to the users.
+
                 raise Exception(
                     "Trying to add a non-root block to an empty blockchain!"
                 )
