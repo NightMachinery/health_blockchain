@@ -48,37 +48,37 @@ patient_1_sign_keys
 #+end_src
 
 #+RESULTS:
-| <cryptography.hazmat.backends.openssl.ed25519._Ed25519PrivateKey | at | 0x7f89298e71f0> | <cryptography.hazmat.backends.openssl.ed25519._Ed25519PublicKey | at | 0x7f892999e050> |
+| <cryptography.hazmat.backends.openssl.ed25519._Ed25519PrivateKey | at | 0x7fd1a4b53070> | <cryptography.hazmat.backends.openssl.ed25519._Ed25519PublicKey | at | 0x7fd1a59f51e0> |
 
 #+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
 patient_1_readwrite_keys = []
 patient_1_readwrite_keys = readwrite_key_generate_and_append(patient_1_readwrite_keys)
 
-patient_1_readwrite_keys
+print(patient_1_readwrite_keys)
 #+end_src
 
 #+RESULTS:
-| <cryptography.fernet.Fernet | at | 0x7f8929ba80a0> |
+: [<cryptography.fernet.Fernet object at 0x7fd1a6127520>]
 
 * doctor 1
 ** generate the keys
 #+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
 doctor_1_sign_keys = sign_keys_generate()
-doctor_1_sign_keys
+print(doctor_1_sign_keys)
 #+end_src
 
 #+RESULTS:
-| <cryptography.hazmat.backends.openssl.ed25519._Ed25519PrivateKey | at | 0x7f8929ba80d0> | <cryptography.hazmat.backends.openssl.ed25519._Ed25519PublicKey | at | 0x7f8929ba81c0> |
+: (<cryptography.hazmat.backends.openssl.ed25519._Ed25519PrivateKey object at 0x7fd1a59f57e0>, <cryptography.hazmat.backends.openssl.ed25519._Ed25519PublicKey object at 0x7fd1a59f5570>)
 
 * doctor 2
 ** generate the keys
 #+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
 doctor_2_sign_keys = sign_keys_generate()
-doctor_2_sign_keys
+print(doctor_2_sign_keys)
 #+end_src
 
 #+RESULTS:
-| <cryptography.hazmat.backends.openssl.ed25519._Ed25519PrivateKey | at | 0x7f8929ba8910> | <cryptography.hazmat.backends.openssl.ed25519._Ed25519PublicKey | at | 0x7f8929ba8130> |
+: (<cryptography.hazmat.backends.openssl.ed25519._Ed25519PrivateKey object at 0x7fd1a5f410c0>, <cryptography.hazmat.backends.openssl.ed25519._Ed25519PublicKey object at 0x7fd1a49eb670>)
 
 * patient 1 and doctor 1
 ** block 1
@@ -94,7 +94,7 @@ new_block
 #+end_src
 
 #+RESULTS:
-: Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'fake photo stored as bytes'}, previous_block_hash=None, signatures=[b'\x11\xfb\x8cs\xc0\xcf\xc1\xd3\xa6\xd8\x8dn\xe7w0\xfc\xf0W\xd5\xa4\x9b\x82\xe8y\xf9\xe7\x82\xc9\xfb\x13\xff.\xba\x1bt!\xc2\xf1\x0e\x19~]J\x01c\xdc\x98\xc3kS\xb7\x9cD\xee\x8b\xaa\x85\xab\x02\xfe\x9bP\xec\x0b'])
+: Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'fake photo stored as bytes'}, previous_block_hash=None, signatures=[b'p\xa1\xd4\xf7R\x93V\xe0\x1d\xf5\\\xf0\xe7\x93\xc8\xd1\xfe>\xb2\x84\xf0\xd3\xcdS\xa6\xc6\xf6\xc0\x96>lO\xa2\x80%\x90O\x82@\xed\x19\xc4\xc9,\xd4\x9e\xba\xc5\xa2\xd6!\x95A\x80\x89\x1ao*R}\xc3Vu\x0f'])
 
 Then the doctor gives the block to the patient who will also sign it:
 #+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
@@ -103,7 +103,7 @@ new_block
 #+end_src
 
 #+RESULTS:
-: Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'fake photo stored as bytes'}, previous_block_hash=None, signatures=[b'\x11\xfb\x8cs\xc0\xcf\xc1\xd3\xa6\xd8\x8dn\xe7w0\xfc\xf0W\xd5\xa4\x9b\x82\xe8y\xf9\xe7\x82\xc9\xfb\x13\xff.\xba\x1bt!\xc2\xf1\x0e\x19~]J\x01c\xdc\x98\xc3kS\xb7\x9cD\xee\x8b\xaa\x85\xab\x02\xfe\x9bP\xec\x0b', b'\xa0\x13O\x00\x86b\xf2Of\x93\xd5$\xaf\x95@\xe6)e\xda\x01s\x1d\x92e\xd2W\x8b\x90\xad\x18\xe4\xa0\x12P\xa2e\x07\xc5%f\x1e\xb5\x7fS\xe6\xe6u\x81=?\xc8\x06\x9d\x07x\xd4$&\xe7\x88\x88\x05\x02\x0c'])
+: Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'fake photo stored as bytes'}, previous_block_hash=None, signatures=[b'p\xa1\xd4\xf7R\x93V\xe0\x1d\xf5\\\xf0\xe7\x93\xc8\xd1\xfe>\xb2\x84\xf0\xd3\xcdS\xa6\xc6\xf6\xc0\x96>lO\xa2\x80%\x90O\x82@\xed\x19\xc4\xc9,\xd4\x9e\xba\xc5\xa2\xd6!\x95A\x80\x89\x1ao*R}\xc3Vu\x0f', b'\x140z\xf4\x1e\xbf5\x88f\x92\x8b2P\xfe\x8d\xab\xa3\xb2\x1f\xd7`\x1c\xe06|kr\x97\xc0BA\x8d~\xd4\xe3\x1d\xf5~ \xc6\xa7\x04W\xaeC0W8m\x89|Cis\xa5]\x82{&\xa6\xa6\x90\x02\x04'])
 
 Let's verify the signatures:
 
@@ -143,7 +143,7 @@ print(patient_1_blockchain)
 
 #+RESULTS:
 : Blockchain:
-: 	blocks=[Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'fake photo stored as bytes'}, previous_block_hash=None, signatures=[b'\x11\xfb\x8cs\xc0\xcf\xc1\xd3\xa6\xd8\x8dn\xe7w0\xfc\xf0W\xd5\xa4\x9b\x82\xe8y\xf9\xe7\x82\xc9\xfb\x13\xff.\xba\x1bt!\xc2\xf1\x0e\x19~]J\x01c\xdc\x98\xc3kS\xb7\x9cD\xee\x8b\xaa\x85\xab\x02\xfe\x9bP\xec\x0b', b'\xa0\x13O\x00\x86b\xf2Of\x93\xd5$\xaf\x95@\xe6)e\xda\x01s\x1d\x92e\xd2W\x8b\x90\xad\x18\xe4\xa0\x12P\xa2e\x07\xc5%f\x1e\xb5\x7fS\xe6\xe6u\x81=?\xc8\x06\x9d\x07x\xd4$&\xe7\x88\x88\x05\x02\x0c'])]
+: 	blocks=[Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'fake photo stored as bytes'}, previous_block_hash=None, signatures=[b'p\xa1\xd4\xf7R\x93V\xe0\x1d\xf5\\\xf0\xe7\x93\xc8\xd1\xfe>\xb2\x84\xf0\xd3\xcdS\xa6\xc6\xf6\xc0\x96>lO\xa2\x80%\x90O\x82@\xed\x19\xc4\xc9,\xd4\x9e\xba\xc5\xa2\xd6!\x95A\x80\x89\x1ao*R}\xc3Vu\x0f', b'\x140z\xf4\x1e\xbf5\x88f\x92\x8b2P\xfe\x8d\xab\xa3\xb2\x1f\xd7`\x1c\xe06|kr\x97\xc0BA\x8d~\xd4\xe3\x1d\xf5~ \xc6\xa7\x04W\xaeC0W8m\x89|Cis\xa5]\x82{&\xa6\xa6\x90\x02\x04'])]
 : 	content={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'fake photo stored as bytes'}
 :
 
@@ -170,7 +170,7 @@ block_2
 #+end_src
 
 #+RESULTS:
-: Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'some fake updated photo', 'chest_xray_2022_05_11': b'some fake chest x-ray'}, previous_block_hash=b'\xe8\x07 \x8b_\xd5\x07\x08Ku\xf7\xbc\\\x10\x1f\xc7\xcf\xb9}\x1dHv\xb53Y\x10G\xb8\xe5\x9dx\x9d\xf5\x1e{2\x12\xc91\xb1\xb7\xa4O\xb17d\x15\x0c\x1d\xb9\xff\xe1\n\xf9j\xc1*=\x11\x9b\xda\xc1\xa9\x94', signatures=[b':\x85\xe0\xbf\x13\x01\xbb\x01\xd3\x1a\x93\xf3Eu\xfa\x01t?d\xd4\x1c\xfe\x91w0B\xb0\x03|\x0e\x1f\xe35\xf6\xbfD\xf4\xe3\x19n3r\xb8:\xe1&eY#\x1eW<\x19H\xf3\x00\xbb\xfe\x98\x83.\xbf\x94\x03'])
+: Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'some fake updated photo', 'chest_xray_2022_05_11': b'some fake chest x-ray'}, previous_block_hash=b'\xe8\x07 \x8b_\xd5\x07\x08Ku\xf7\xbc\\\x10\x1f\xc7\xcf\xb9}\x1dHv\xb53Y\x10G\xb8\xe5\x9dx\x9d\xf5\x1e{2\x12\xc91\xb1\xb7\xa4O\xb17d\x15\x0c\x1d\xb9\xff\xe1\n\xf9j\xc1*=\x11\x9b\xda\xc1\xa9\x94', signatures=[b'\xc9d\xd0\x03j\xde\xcb\x82\x8c\xb7\xfe\xbf\x9d\xf7\xd1YU@g\xa8\\1\xe9\x9f\xd0\xf6\x8dp)\x0e\xc3\xfe\xe9R\xfc\xf3,6d\xfd\xd2\xfd\xac3,\xb0\x1c\xd6\xc7\xd8\xd7\n\xd5\xf4/L\x05\xf9*\xfdX\xfa\xfe\x01'])
 
 The patient signs this block and adds it to their blockchain:
 #+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
@@ -187,7 +187,7 @@ print(patient_1_blockchain)
 
 #+RESULTS:
 : Blockchain:
-: 	blocks=[Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'fake photo stored as bytes'}, previous_block_hash=None, signatures=[b'\x11\xfb\x8cs\xc0\xcf\xc1\xd3\xa6\xd8\x8dn\xe7w0\xfc\xf0W\xd5\xa4\x9b\x82\xe8y\xf9\xe7\x82\xc9\xfb\x13\xff.\xba\x1bt!\xc2\xf1\x0e\x19~]J\x01c\xdc\x98\xc3kS\xb7\x9cD\xee\x8b\xaa\x85\xab\x02\xfe\x9bP\xec\x0b', b'\xa0\x13O\x00\x86b\xf2Of\x93\xd5$\xaf\x95@\xe6)e\xda\x01s\x1d\x92e\xd2W\x8b\x90\xad\x18\xe4\xa0\x12P\xa2e\x07\xc5%f\x1e\xb5\x7fS\xe6\xe6u\x81=?\xc8\x06\x9d\x07x\xd4$&\xe7\x88\x88\x05\x02\x0c']), Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'some fake updated photo', 'chest_xray_2022_05_11': b'some fake chest x-ray'}, previous_block_hash=b'\xe8\x07 \x8b_\xd5\x07\x08Ku\xf7\xbc\\\x10\x1f\xc7\xcf\xb9}\x1dHv\xb53Y\x10G\xb8\xe5\x9dx\x9d\xf5\x1e{2\x12\xc91\xb1\xb7\xa4O\xb17d\x15\x0c\x1d\xb9\xff\xe1\n\xf9j\xc1*=\x11\x9b\xda\xc1\xa9\x94', signatures=[b':\x85\xe0\xbf\x13\x01\xbb\x01\xd3\x1a\x93\xf3Eu\xfa\x01t?d\xd4\x1c\xfe\x91w0B\xb0\x03|\x0e\x1f\xe35\xf6\xbfD\xf4\xe3\x19n3r\xb8:\xe1&eY#\x1eW<\x19H\xf3\x00\xbb\xfe\x98\x83.\xbf\x94\x03', b'v\xeaL\xd0\xd6\xd2\x87\x8c\x02O+\xcf\xb7\xab\xbd$l\xe0\xcc5\xbeG\x0e=\nE\xc6\xc0\xffC\xb3\xa16\xf8)\xba\xc3\xba\xc4\xb1\xdat\x8d\xa8\xe3\xcf1(\xa7\xd1\xb5\x13\x8d_1\xd3.\xd2\xe61\xc3\xc0>\t'])]
+: 	blocks=[Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'fake photo stored as bytes'}, previous_block_hash=None, signatures=[b'p\xa1\xd4\xf7R\x93V\xe0\x1d\xf5\\\xf0\xe7\x93\xc8\xd1\xfe>\xb2\x84\xf0\xd3\xcdS\xa6\xc6\xf6\xc0\x96>lO\xa2\x80%\x90O\x82@\xed\x19\xc4\xc9,\xd4\x9e\xba\xc5\xa2\xd6!\x95A\x80\x89\x1ao*R}\xc3Vu\x0f', b'\x140z\xf4\x1e\xbf5\x88f\x92\x8b2P\xfe\x8d\xab\xa3\xb2\x1f\xd7`\x1c\xe06|kr\x97\xc0BA\x8d~\xd4\xe3\x1d\xf5~ \xc6\xa7\x04W\xaeC0W8m\x89|Cis\xa5]\x82{&\xa6\xa6\x90\x02\x04']), Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'some fake updated photo', 'chest_xray_2022_05_11': b'some fake chest x-ray'}, previous_block_hash=b'\xe8\x07 \x8b_\xd5\x07\x08Ku\xf7\xbc\\\x10\x1f\xc7\xcf\xb9}\x1dHv\xb53Y\x10G\xb8\xe5\x9dx\x9d\xf5\x1e{2\x12\xc91\xb1\xb7\xa4O\xb17d\x15\x0c\x1d\xb9\xff\xe1\n\xf9j\xc1*=\x11\x9b\xda\xc1\xa9\x94', signatures=[b'\xc9d\xd0\x03j\xde\xcb\x82\x8c\xb7\xfe\xbf\x9d\xf7\xd1YU@g\xa8\\1\xe9\x9f\xd0\xf6\x8dp)\x0e\xc3\xfe\xe9R\xfc\xf3,6d\xfd\xd2\xfd\xac3,\xb0\x1c\xd6\xc7\xd8\xd7\n\xd5\xf4/L\x05\xf9*\xfdX\xfa\xfe\x01', b'\r\xc6\xb2\xa5\xaaG\xf1\x91P\x12$\xb2\xec\x92\xc1\x08\xed\xfb\xa2\xca(\xff\xbe\xf6\xf6Xj6 \x8dZ\tm\x0cX\xd7\x85R\xc4!\xfd\xd1\xce,n\xc6\xc9\xba\xf7\xb9g\x03\xc8<\xc3\x17\xb2\xca\x01h\xa7\r\x88\x0f'])]
 : 	content={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'some fake updated photo', 'chest_xray_2022_05_11': b'some fake chest x-ray'}
 :
 
@@ -212,7 +212,7 @@ new_block
 #+end_src
 
 #+RESULTS:
-: Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'fake photo stored as bytes', 'some_data': 'hi'}, previous_block_hash=b'\xe8\x07 \x8b_\xd5\x07\x08Ku\xf7\xbc\\\x10\x1f\xc7\xcf\xb9}\x1dHv\xb53Y\x10G\xb8\xe5\x9dx\x9d\xf5\x1e{2\x12\xc91\xb1\xb7\xa4O\xb17d\x15\x0c\x1d\xb9\xff\xe1\n\xf9j\xc1*=\x11\x9b\xda\xc1\xa9\x94', signatures=[b'\xf3x}Q\xd2h\xc8\xf5\xd5\xae\x95\x1c\x99:\xe1\xb8\xdbo2%a\x81\xbc\xfa\xc0j\xb8N\xee\xb9^\xf9\xdbU\xda!\xe1\x86\xd9_ci\xa3\xea\r\x02\x92\xa1\xacH)?w\x1d\x15\xaaz\xdc\xb6\x12=\xee\xa0\x0e', b'4\xe3\x05\x08\xa2cW\xf9:\\\x91\xb2\xc5x\xd1\xe1\xef1C^{lU\x1b*G\xb0f\x93\x16\x1fO! \x1bn5\xd4\x12\x0c\x8fQN>@\xda,{\x11\x14+\x92\x06|\xbf[+\x8f\xef\xa24\x9ao\x01'])
+: Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'fake photo stored as bytes', 'some_data': 'hi'}, previous_block_hash=b'\xe8\x07 \x8b_\xd5\x07\x08Ku\xf7\xbc\\\x10\x1f\xc7\xcf\xb9}\x1dHv\xb53Y\x10G\xb8\xe5\x9dx\x9d\xf5\x1e{2\x12\xc91\xb1\xb7\xa4O\xb17d\x15\x0c\x1d\xb9\xff\xe1\n\xf9j\xc1*=\x11\x9b\xda\xc1\xa9\x94', signatures=[b'\x0c\xe1n\x15iv\xc0R\xa9 \xc9\xaf\xb3(\x94\xacDY\xf2\xd9\xf5\x04\xdbT\x11@\x84\xc50X\x81\x1d|\xba\r\x1c\x8cM\xf5+\xe1\x84QCG\xb3\xec+X\xa3\r\x82?\xce\xf4\r@\xdcp:\x1e\xc6\xcd\x00', b'\xf5\xf9\x8aeV:\xef\n9\x8dut1<\x86\x93\x8a\xdcA\x9f\x12\xa9\xe9\xc5\x12jH8K\x92\xce\x01\xae4\x02\xb5\x0f\xfd\xc2+\x8eJ\x8f\x8eg\xaa,\xf3{\xa4\x87\xd5\xa7\x9e\xc5\xd2I:\xb8\x84\xa3\x038\x06'])
 
 When the patient tries to add this block, it should fail:
 #+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
@@ -230,7 +230,7 @@ print(patient_1_blockchain)
 # [goto error]
 : ---------------------------------------------------------------------------
 : Exception                                 Traceback (most recent call last)
-: Input In [18], in <cell line: 1>()
+: Input In [32], in <cell line: 1>()
 : ----> 1 patient_1_blockchain.add_block(
 :       2     block=new_block,
 :       3     public_keys=[patient_1_sign_keys[1],
@@ -238,12 +238,12 @@ print(patient_1_blockchain)
 :       5 )
 :       7 print(patient_1_blockchain)
 :
-: File ~/Base/_Code/uni/health_blockchain/health_blockchain/blockchain.py:31, in Blockchain.add_block(self, block, public_keys)
-:      29     self.blocks.append(block)
-:      30 else:
-: ---> 31     raise Exception(
-:      32         "The new block's previous_block_hash does not match the last block in this blockchain!"
-:      33     )
+: File ~/Base/_Code/uni/health_blockchain/health_blockchain/blockchain.py:33, in Blockchain.add_block(self, block, public_keys)
+:      31     self.blocks.append(block)
+:      32 else:
+: ---> 33     raise Exception(
+:      34         "The new block's previous_block_hash does not match the last block in this blockchain!"
+:      35     )
 :
 : Exception: The new block's previous_block_hash does not match the last block in this blockchain!
 :END:
@@ -259,7 +259,7 @@ patient_1_blockchain_ed
 #+end_src
 
 #+RESULTS:
-: <health_blockchain.edwrapper.EDWrapper at 0x7f8929d02830>
+: <health_blockchain.edwrapper.EDWrapper at 0x7fd1a5f49450>
 
 #+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
 patient_1_blockchain_encrypted = patient_1_blockchain_ed.obj_encrypted
@@ -267,7 +267,7 @@ patient_1_blockchain_encrypted
 #+end_src
 
 #+RESULTS:
-: b'gAAAAABjG4W2wq7bdgwbN1f_4HkC7r21Iw741cyZbF8PELyyauODaPm9kXWuq0Z9AirbTHz_uD282_Plhwe8O2HXcPymgpwi81jY99xri2xO2YxZYimrRKGUCzKtdR9znc3mL5BRXZLGCzLkrn48-RJwMg4lH5UagIiJXc4xvRCrWUCvtIlrsojdcOtpvFlu0-C3N-T3gYe9UMkFySph51B09M-UzdAjQGXm-kULhUYtnQVlcpLSsnZAjgqz8Yl4XJgWH4BBckEOWHF66Nf-h7XXHoPc7EREyC73a8NqctFPAKf9HNPqbRnGWq18jtpzuK6ubmLWNVsYwzMFgmHvBHQRjP8fBObf-ML1URIgkQ8QpSnylMyKhHTBonmfmiTxAfdcu1mRbCV2bLfdhrgbiaTz_PQYXLQyXaBEwIm2ydIsM7KGJG50MfUYxO3LWwR1Iu5RdmlTP_X4YsgUJGOrZPeRh0tqpeCKCPIi-YtTAQebU3m5xytX6R8nS35MOOJxtY6Er9yremc3__du6a6NOjDdvvZXVFpBIxi6bVohNpJTbRBwh8-fPIXZhQ0T9NYE--MXpBAm7MwgMfEFpAObUujZ23tIao5cb-EjfbB8LEodWRo5VfsUVPj8LCxbP0WXy7WxjjIYIe7XJZhz6MMjUPvJXPEYoArEatb7YbatEIBSsk42EUFt5EmAMPJl2JYz2DOmJ4hhUyLr617q29WD4jNsth5MIegdoGk3Bt5jCCWfimPLvXIKfAntpIkORCsqunWMbOE3Dg1Fn9AlRr2CbdUrlmew4iDWaEKO1z7JZ30VvGOMx7jNOw4E5p7CwdcWZTFnATf5fLw2fOPZXMO8hCIPp67pC2G-34Co8SVdxznPMlrKE4M4SldjL4vbmlNSMQU1-d-Sgx-EeB_PYsERepIvlZuTRk9bErjQr_vzxn7-hqf7fnkFePs5Ol--6y-3ZPVGSVu223wUc0Awf5W4R4DShXo6FArkOk8id2cqcwEZEjAE3xFcCb1CpalH_2s0E9G2IeJy7VS3pC6PNUMy9ta-VoOWg2uubhvQO_zkShbGHsyTYMSFwJhXiE0FfsEn_gWfPkit05pDlsY2krkoSG8ijvcHf3y1KcgvqxRSPWCskGMPrmVtbd3us-5vUxr6A-W4JansYk-u0_PuDqUaEdbWo8MfGBfyVMz-MuMV0VqvAPe0OmkI_mu16euhakGp0TLRzfI8qkqUYPJHFRP0ofKgt-0HIbkmhN3_aPvY_pBxL0Rbu8Kmtj3ud9cGx-5F7Jb033Tduu2X7K6v7yRP6cFAyZFrUDwUUBIydn_M3oaP-qmcEz9VyVk_qXTu9sBC0ZWUVJSddSmkudwx3zuiCLAzGi-1XmjHRowiFn-9pBj3DgPC-zxqmaAJuWvkRj-3RHTV5emS3HFtI3nlcMrv3I3twe1_U6befx59KhQe120vUVKSUc-mB4-AsKEMFJjeNrygVe0DgJrINAM90Rp1esMt1aUoHklgvwGU1SFQljt4jhDw-FH-TPATO2nSnCPmzW1qYU30ad2Zc_PtPsYG4rCLG1kq0RwCdnM-bXgIhoGTdRSGFfN3gbFvNv27Qa3qdqBkBGRoVQIk3VYpzxvlogA_tcgrNg4hbHV70wc2aecfwxMTnfLQHF-cZQnRk2Loydf3wCgn-lIhci9_FpewwIPLd5zUfB4Emw=='
+: b'gAAAAABjIf9jQwuzlIca4X0L6V0cPw1NquytqJL5cSnu2c4tnMnnozr8MQzp6ElSSWRtcZNd3SPSWFyu8MraaNtfXM3N0o-VgjktVzxFQ0Kb1DKtz5bcnDc1Jb3OX5iCMvsoN1XhAOkFbo3ZTH4RbaaYXAvC1gICLl9N-QkFzuAv-hZfcF1m5gtO3cdQDyDC8VukMHefSsjHJNC_RC5_FKy1xgVI2HDyCFmMbfjHYHO0Ga7Ugsrh-Te_30lz5S3wXAUcetqpTULew8iagw7NCElNlrpPmYcbUDIn_mHUhNa_5ZoM4NMrpvT4Yi_v8tfp6FN46CWEYqADWuef6H6GBpTgY8bChXr2fYXaRIA46sRNZEvY2jy35fpCPh-l41Pa1QuMvzfz5aK55EXkhjIUCBE4SNjZakc0crBUHjnCUn6DXutGyjLQnhpy72PM5aWpGxnnv132pazghyESSrdeThdLGQN7M2pIsnva4AcuTTaRPsAQ1xJHAKB_HUCgBKYnjETwlghm0ZzR9K_ynukvT6AAgf9TpYhQ0T3NNujgS-0FJ6ShsWZ3N29wjP8rffFW_07CeqmWP6DKSFv5jIppkUx9cKskeOI_FQC9nN9syZnhX1cn9MBcefBgnGo89FF1jIghToLabeRdVFxJPGclDgqrCHYXIzpk_XJUDbeGMNkweWDDi-_1Yb6f1v4-OvPpYtnMqtcrBiZ_3PDdVyBxJ58RKKZbM3fStgU89V-IPJEcKp1yBDiEEIVk93iynJnIr_mb5luoox0OoVxbs5DulCBoKHJsBMlARF21RBO1PCKf8vdSdqeaSesAG50-nbKzpLh2BLLfzDt6A0kQLw8FxGDocuwxc6bPVaZtCUgVrIY8Vcw77gy38-JL5xPk2jfWo7KTLpeHB5J-8LUL2AMZ4sboGhX6tK42HUyw4r-9z1P-ytKUeQCI3hbUJSo5rxsFJ2EoZbtR0IFazuo5pOhpE_Q51aOncFRp0grgyZ8FmFrnxbUuebfhqb-o_SNGktKCZE8a1IN6F9UCr3uISzItf4OM8fead4Mz0P_BgufHw0TRk7XwrIPlikB-dtTlibe5rew3qj5xpMhmfUYzHrUBHlXXAEKJ-F_xcjOGWyDnfsFG6Y0MC4gdTCyuh4F9gRmQnIWrk4Yjlanf50XvbICcY-rkUaGHernxenz2LCH1i9pRY9UJ0jdnU3DnqhUo9NaH597_36xF0vuz-iiHF0dPg8WF5Ll1nyG8mntcddOfFeiYupZjuN9I9xQjTlAlmSEteRuGYxS-vCoV7_2JnmlJiPLeSomWSPUNCZihHK8DHnXcR2dNs1PBDYsS757bW-AnJq1746Tl1vm56ZKI42xgJ36mxrqrfnhXteGt5D5lwFRihQ8gekYTIn-UHSTyAjc_6sfiO8HQ4CTz5J5JO_XyeqX8ic_qsKN62_h16fIqzfzH73pLzozI3tH36UVehoGIVKaJgm2xOsuGCphuj7CVTRadymALhQsWcSjEPPGSrHShgFNVgsp87Y6fUJovPEASsFlVrNkMhTPDTBt6lyR442WepaHSscJLiLoWmk8iQU-s0jt9w_lgVFxLLlTeowB-_X3rgokouOd1-y1Ys8LSu6mwWU1Tk8FJ2a8PHGEM_sqaj-CExkMfSgJAIW8PmMfAK7x3AI9PVI5D6RAmAJ1TAUsNWYoCjsggDQ=='
 
 The patient can give their last read/write key to the doctor, and the doctor will be able to decrypt this data:
 #+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
@@ -283,7 +283,7 @@ print(blockchain_decrypted)
 
 #+RESULTS:
 : Blockchain:
-: 	blocks=[Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'fake photo stored as bytes'}, previous_block_hash=None, signatures=[b'\x11\xfb\x8cs\xc0\xcf\xc1\xd3\xa6\xd8\x8dn\xe7w0\xfc\xf0W\xd5\xa4\x9b\x82\xe8y\xf9\xe7\x82\xc9\xfb\x13\xff.\xba\x1bt!\xc2\xf1\x0e\x19~]J\x01c\xdc\x98\xc3kS\xb7\x9cD\xee\x8b\xaa\x85\xab\x02\xfe\x9bP\xec\x0b', b'\xa0\x13O\x00\x86b\xf2Of\x93\xd5$\xaf\x95@\xe6)e\xda\x01s\x1d\x92e\xd2W\x8b\x90\xad\x18\xe4\xa0\x12P\xa2e\x07\xc5%f\x1e\xb5\x7fS\xe6\xe6u\x81=?\xc8\x06\x9d\x07x\xd4$&\xe7\x88\x88\x05\x02\x0c']), Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'some fake updated photo', 'chest_xray_2022_05_11': b'some fake chest x-ray'}, previous_block_hash=b'\xe8\x07 \x8b_\xd5\x07\x08Ku\xf7\xbc\\\x10\x1f\xc7\xcf\xb9}\x1dHv\xb53Y\x10G\xb8\xe5\x9dx\x9d\xf5\x1e{2\x12\xc91\xb1\xb7\xa4O\xb17d\x15\x0c\x1d\xb9\xff\xe1\n\xf9j\xc1*=\x11\x9b\xda\xc1\xa9\x94', signatures=[b':\x85\xe0\xbf\x13\x01\xbb\x01\xd3\x1a\x93\xf3Eu\xfa\x01t?d\xd4\x1c\xfe\x91w0B\xb0\x03|\x0e\x1f\xe35\xf6\xbfD\xf4\xe3\x19n3r\xb8:\xe1&eY#\x1eW<\x19H\xf3\x00\xbb\xfe\x98\x83.\xbf\x94\x03', b'v\xeaL\xd0\xd6\xd2\x87\x8c\x02O+\xcf\xb7\xab\xbd$l\xe0\xcc5\xbeG\x0e=\nE\xc6\xc0\xffC\xb3\xa16\xf8)\xba\xc3\xba\xc4\xb1\xdat\x8d\xa8\xe3\xcf1(\xa7\xd1\xb5\x13\x8d_1\xd3.\xd2\xe61\xc3\xc0>\t'])]
+: 	blocks=[Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'fake photo stored as bytes'}, previous_block_hash=None, signatures=[b'p\xa1\xd4\xf7R\x93V\xe0\x1d\xf5\\\xf0\xe7\x93\xc8\xd1\xfe>\xb2\x84\xf0\xd3\xcdS\xa6\xc6\xf6\xc0\x96>lO\xa2\x80%\x90O\x82@\xed\x19\xc4\xc9,\xd4\x9e\xba\xc5\xa2\xd6!\x95A\x80\x89\x1ao*R}\xc3Vu\x0f', b'\x140z\xf4\x1e\xbf5\x88f\x92\x8b2P\xfe\x8d\xab\xa3\xb2\x1f\xd7`\x1c\xe06|kr\x97\xc0BA\x8d~\xd4\xe3\x1d\xf5~ \xc6\xa7\x04W\xaeC0W8m\x89|Cis\xa5]\x82{&\xa6\xa6\x90\x02\x04']), Block(content_dictionary={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'some fake updated photo', 'chest_xray_2022_05_11': b'some fake chest x-ray'}, previous_block_hash=b'\xe8\x07 \x8b_\xd5\x07\x08Ku\xf7\xbc\\\x10\x1f\xc7\xcf\xb9}\x1dHv\xb53Y\x10G\xb8\xe5\x9dx\x9d\xf5\x1e{2\x12\xc91\xb1\xb7\xa4O\xb17d\x15\x0c\x1d\xb9\xff\xe1\n\xf9j\xc1*=\x11\x9b\xda\xc1\xa9\x94', signatures=[b'\xc9d\xd0\x03j\xde\xcb\x82\x8c\xb7\xfe\xbf\x9d\xf7\xd1YU@g\xa8\\1\xe9\x9f\xd0\xf6\x8dp)\x0e\xc3\xfe\xe9R\xfc\xf3,6d\xfd\xd2\xfd\xac3,\xb0\x1c\xd6\xc7\xd8\xd7\n\xd5\xf4/L\x05\xf9*\xfdX\xfa\xfe\x01', b'\r\xc6\xb2\xa5\xaaG\xf1\x91P\x12$\xb2\xec\x92\xc1\x08\xed\xfb\xa2\xca(\xff\xbe\xf6\xf6Xj6 \x8dZ\tm\x0cX\xd7\x85R\xc4!\xfd\xd1\xce,n\xc6\xc9\xba\xf7\xb9g\x03\xc8<\xc3\x17\xb2\xca\x01h\xa7\r\x88\x0f'])]
 : 	content={'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'some fake updated photo', 'chest_xray_2022_05_11': b'some fake chest x-ray'}
 :
 
@@ -315,7 +315,7 @@ patient_1_blockchain_encrypted
 #+end_src
 
 #+RESULTS:
-: b'gAAAAABjG4W2N4XNQBRhJ6olY0pqADid8b903b-R73owCdyVsaTY0ibHCth_mMDJjqd4-7O3cyb4KU6IZvJOva2IrBEd48EsequvOI3V0oLo1SrRjaAWrY9VaV0g2dds1SeRgWJC0bgX8D-0hlhXBAoll9mabjH9oiUXMd-8I1C4PFoX-FqMSoeOo8R5xq8bWSWedMa0OthMmZ5C1KfW6urJXQnZYsl1nRFlmlvymwldGCgK3PN8q9UQ4xml1LEpls81KRCVvfUpstEeuIlOvp0PyEC5yI6jjy64_oeLi-Ut0a7PBIMQslfAOrkLAKQXZucLb92QSKIIujwfiAptTFeIGMcDQw-8okjDeJdRP31ZmnutoWFfEUNCibegXeQO2nFZtN15CLaap2A4ZzR2V0xL8Su47Dm127mdxKtfrNs31AP4n2n8HRa6C1H-WGNKeTMOL5OmZmdOdlUFXLtuOtM851UmACx342la8LlSOCykyYOHJyRIgkX_Ehl-4aEItPwNZ4fQOaxpr1q9tbFRkYagaIj89Jo84tR_c2vnyulhL9EyBO3BRPGVAeRS3Bzay9mMQHQpufwTwS6ccQcwLgGCGs1qIyBXUiXRCZngEGMeHj-mxrUBil7j7LyzZz9ok5LAc394dvu36Ccx9WUy6nBX5TfTQobRT0ufDoXcQ5h4N8IwhHDdq7K4JcsB3VCQL2A0rT8UbvxR47FkJeN_dgBKX5Gm0nEf94xWXqltj89LHVZWj0QK9YBlfUPXwdFj_F-Q8kxAeKCPHNIAI4JU01wKc2Fvy6NwjeWkrNihLz7IV_-cFBV4meW8NddpamfsHpnCsqM9nP0WthQfuZEGcK0AwapIFmpCLrV8ZiSa_I-gnMLi8jFJTv4Yc7WvtvLxl8a369EXySF-yk5OhHyMsY2bdB2n854Pxk_VMGOV6FYwd5gG605ZD-WXKRWLPgzi3sH7cQaS_pLwihyU0HncAsLIKWMfv7MjKjxT3iWsIblq3V0UCSQtSLSKLkRIA6p3Yi7xeCuBxwY3JbHVTa-9Wm2ncebOG8vxLVHaicfAFEMmYMxl11DCxZF0ZqM7zm_XJnc6FAOX_qt1DUDGsecGz7-I9By5eSfTHzIheVjV779NlpqoqyqKEPreVe93k0YPRVNRLhEhdJ1ovAJRC8W3QPsZnC20bpawi9b7sEoBd79y7bca0DtgjpINI4G0I-j0BLIuTjQK-Ik9NWCcA9leL_5aqG_aNCE6CMlFLWSP_xtim7EXlyS7v-swgED2ZC6sgPuN7LgHTJ6z9Vj2qI5-Nf6oV81IIjlMQ_pjLGNI7TPuiVc3AaGAMQc8fhtOR6rAAEOhhC1trzwccezQhDVP6DpfN-T2sgXbnNz-wb8C7yH50qY5AKdQWqF2v2AqbAlsvF83h_oBpcIj2VQbrA4hH4Iv4G-81wxd2_tCUqlUVOr7f8GTGua-YBBSLvXkmcO6QjSVUvdeJICAunvc_G653ZKY2XkP2-uuvD0JOX37uG4q1Q8lv730J183G1BykBZNlMwIXxcfvUW4gznJNjTwYTvKJ3yKN9r_JQ8V9mxQOc1i03ik2fBJtbiqYv4CbEQ9XSaDNZaWn_efl-4WRe8z1vqHXENHctvQxBVsXhfAzRtZY1sDb_-KlJBUNMtyGYFSFycTahXi-_heDOPkG_aGuzx6u-tXI8zuFQ=='
+: b'gAAAAABjIf9jRDoLYBqrike4EdrSlaH6luwCBh2TWr5_WeNcMm_fvAxAlGP-lO-1hqvtHpZOsvqDUCdlbV28Zn-gPisymEe9tkgyzb_JL5RlwOR1qqD0G9d5Qf4Sn6pSwix-GfaKLj8f-R1LsuKyhHxjc3D6s6Ngz9FYLWbrigA5lHP3MdV_l9KZ4muBB8ugvh7s-3DrcjLKhLPfUlr1Ne3_QA7sIz_q-xUuhxYZXArvVioJOuCCvmv3JFKo28cNP9co22vPI5eQfcx5GZNPj-jOuWUY9qBcp7qQegqVdn_G3i2cFT704-1YQsxpL4xq1Qo9magDW3w-PfjRLRz_YW809koab7mzcQ8wix1DLzj87luHiSmhvoI5mfP7tB9QywadxlTB7OwOci41jiD-QVFjVnUhTbq9m3X6tbjyVTnQYzO5oZ2bhQIYRfIS-IQ0r5FwPRRSOy9KXw7ysZj1j0dMrLaOR4wQvpCQirKo-qQB7_uiMhTWNDiNcsnWQoQIQpNj5GTtdM2newcgDwlqPbRd-H9CcVqr_tE4muXuPfkAUxMOjnDKtgYIq-QokaZk_yhX80M3QgO7Zs1LFO4oyMAEGGOBqadzwKQTdgrMNEatlqQK4Nol_AWIz_YMrC1o1LFzdxkBY-mNmZlS8yKzA_SPq3XAPwBCgH59bqcQE4gnp6EEQJ_h_7EnlV-9cA-ut_H6FB38qENOSNlERvqzPonXuhf-SWfDHdeyF6u6n82twQMkrFkOoYa_tkdUj-zfvPhYMIswUUua-RwRilOgpjR1XwQdNfrSHsok6DQn5K5RwvS01u5LzV7buI8nbxPxbEmRIQP_4F4RUsKyh3U5_zl7YauClTyG-8VaYuig5PTqfpbWq8muaw5EjEnWkYgBT0dizhUgrI9KITrSk6PVns6IvdzIBJh5IKK_E-d5NyBSqMjV4QYjrjqGHWj1zSMgTYdmRp0yXrF6Nr8i7Yxhh6caKvftFcscDaVvVfZTj255VgYXOdpV0AzMEuMD6_fW1AWTy0MF1gq0I1h6k-JKxDGurZfnrX4u4vTvsbPKJbc119pdpGfynFd8v4hlGAP4B1NGn70wczpWbDO2NJ0JkIvwtwjWkyvTUu7CzPIobdNR6h9k6CwThvX808BcgqLdY_MtpdNS7672lrn-XL4o135u_LgDvBMRiXhgYHMey-SNdtN2ILmhMxB2SDZYToWP5Y2xQJ0XHfOCLROyGwfcaX9ycj2ovMBpkzND7kvdXMRps1m-KOrJf7rjkl9afWuWPu8z8MA1gik4F2mlX4efRydenYGUk4kzFct0M_sKEUfTFzOmnjUaMc4IbCNjyZDqI2zEjRNQEQp8HrTqeLEBPC7wuvOJXDHn3iCE7tF5-RjCWkb1Cf0Xt5OzAq8Q9rBoKhUSOM37uPC918G0p5ywYwQ6gPsv5i-mrJOQdChBOHxUQU46CwnAB74ZHTrczeyf5MPhPAMsvwh8dsBRuOx96rofjXlxsGSVF-P2cF5DgwQaojfHtmQZtyEyMrewG5CVXCZgAOdobT4m9_jDWUGtfIys_0tMY3jeu3lpIUn37cFvNGw1ZYvqoSeN83SB1UT-DLaJTC1k0L0-xLUJc5_Jx1OYiOAfjbYe-aSTgN25o7N4U2aakoYifj9B_9HWVjYuk4uyZfPbVbcq30NXD0M02ZzldRwlgkUY-g=='
 
 Let's see what happens when the doctor tries decrypting this new data:
 #+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
@@ -333,7 +333,7 @@ print(blockchain_decrypted)
 # [goto error]
 : ---------------------------------------------------------------------------
 : InvalidToken                              Traceback (most recent call last)
-: Input In [50], in <cell line: 1>()
+: Input In [38], in <cell line: 1>()
 : ----> 1 blockchain_ed = EDWrapper(
 :       2     obj_encrypted=patient_1_blockchain_encrypted,
 :       3     readwrite_keys=[last_readwrite_key],
@@ -364,13 +364,13 @@ print(patient_1_blockchain.get_latest_content())
 #+RESULTS:
 : {'first_name': 'Arman', 'last_name': 'Irani', 'photo': b'some fake updated photo', 'chest_xray_2022_05_11': b'some fake chest x-ray'}
 
-* tmp :noexport:
+* COMMENT tmp :noexport:
 #+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
 sign_bytes(doctor_1_sign_keys[0], b'hi')
 #+end_src
 
 #+RESULTS:
-: b'\xdb\xb7\xeb\xeb*\x95\x7f\x850\xbeJ\xf9O\xc6\xc0\xef\x86\x95*<\x1c\x9b;\xf6-\xa7O\xd4\x08\\\xd7\x9f\tK\xf3\xa9\x15\x1ar\xa9\xbf\x9c|\xed>q\xfc\xf3\xe40\xae\xef:\x1e\tS\xfc\x1aQ\xbc[\x9e\x1b\x02'
+: b'%jwx\n5\xfbZ\x98\xec\x9e(\xd7\xf5\xc7\xf9\xf0\xf4\x10\xca\xf5\x94:\xcc\x0c\x0e\xbb\xc4\x96\x95\x05\xfd\x1bb8"\xb8\xaej\xf8*#V{\x07\xe6Z\x17"\xc2/\xeb@\xb1\x04\xed\x9a\xce\xdb0\x81V\xef\x0f'
 
 #+begin_src jupyter-python :kernel py_310 :session health_blockchain_s1 :async yes :pandoc t :exports both
 dataclasses.replace(new_block, signatures=98)
@@ -419,4 +419,4 @@ obj_serialize(patient_1_blockchain)
 #+end_src
 
 #+RESULTS:
-: b'["json_blockchain_marker", [["json_dataclass_marker", "Block", {"content_dictionary": {"first_name": "Arman", "last_name": "Irani", "photo": ["bytes_base64_encoded_marker", "ZmFrZSBwaG90byBzdG9yZWQgYXMgYnl0ZXM="]}, "previous_block_hash": null, "signatures": [["bytes_base64_encoded_marker", "EfuMc8DPwdOm2I1u53cw/PBX1aSbguh5+eeCyfsT/y66G3QhwvEOGX5dSgFj3JjDa1O3nETui6qFqwL+m1DsCw=="], ["bytes_base64_encoded_marker", "oBNPAIZi8k9mk9Ukr5VA5ill2gFzHZJl0leLkK0Y5KASUKJlB8UlZh61f1Pm5nWBPT/IBp0HeNQkJueIiAUCDA=="]]}], ["json_dataclass_marker", "Block", {"content_dictionary": {"first_name": "Arman", "last_name": "Irani", "photo": ["bytes_base64_encoded_marker", "c29tZSBmYWtlIHVwZGF0ZWQgcGhvdG8="], "chest_xray_2022_05_11": ["bytes_base64_encoded_marker", "c29tZSBmYWtlIGNoZXN0IHgtcmF5"]}, "previous_block_hash": ["bytes_base64_encoded_marker", "6Acgi1/VBwhLdfe8XBAfx8+5fR1IdrUzWRBHuOWdeJ31HnsyEskxsbekT7E3ZBUMHbn/4Qr5asEqPRGb2sGplA=="], "signatures": [["bytes_base64_encoded_marker", "OoXgvxMBuwHTGpPzRXX6AXQ/ZNQc/pF3MEKwA3wOH+M19r9E9OMZbjNyuDrhJmVZIx5XPBlI8wC7/piDLr+UAw=="], ["bytes_base64_encoded_marker", "dupM0NbSh4wCTyvPt6u9JGzgzDW+Rw49CkXGwP9Ds6E2+Cm6w7rEsdp0jajjzzEop9G1E41fMdMu0uYxw8A+CQ=="]]}]]]'
+: b'["json_blockchain_marker", [["json_dataclass_marker", "Block", {"content_dictionary": {"first_name": "Arman", "last_name": "Irani", "photo": ["bytes_base64_encoded_marker", "ZmFrZSBwaG90byBzdG9yZWQgYXMgYnl0ZXM="]}, "previous_block_hash": null, "signatures": [["bytes_base64_encoded_marker", "cKHU91KTVuAd9Vzw55PI0f4+soTw081Tpsb2wJY+bE+igCWQT4JA7RnEySzUnrrFotYhlUGAiRpvKlJ9w1Z1Dw=="], ["bytes_base64_encoded_marker", "FDB69B6/NYhmkosyUP6Nq6OyH9dgHOA2fGtyl8BCQY1+1OMd9X4gxqcEV65DMFc4bYl8Q2lzpV2CeyamppACBA=="]]}], ["json_dataclass_marker", "Block", {"content_dictionary": {"first_name": "Arman", "last_name": "Irani", "photo": ["bytes_base64_encoded_marker", "c29tZSBmYWtlIHVwZGF0ZWQgcGhvdG8="], "chest_xray_2022_05_11": ["bytes_base64_encoded_marker", "c29tZSBmYWtlIGNoZXN0IHgtcmF5"]}, "previous_block_hash": ["bytes_base64_encoded_marker", "6Acgi1/VBwhLdfe8XBAfx8+5fR1IdrUzWRBHuOWdeJ31HnsyEskxsbekT7E3ZBUMHbn/4Qr5asEqPRGb2sGplA=="], "signatures": [["bytes_base64_encoded_marker", "yWTQA2rey4KMt/6/nffRWVVAZ6hcMemf0PaNcCkOw/7pUvzzLDZk/dL9rDMssBzWx9jXCtX0L0wF+Sr9WPr+AQ=="], ["bytes_base64_encoded_marker", "DcaypapH8ZFQEiSy7JLBCO37osoo/7729lhqNiCNWgltDFjXhVLEIf3Rzixuxsm697lnA8g8wxeyygFopw2IDw=="]]}]]]'
